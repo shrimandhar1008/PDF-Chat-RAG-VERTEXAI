@@ -1,0 +1,4 @@
+chroma_store/
+rag_env/
+.env
+rag_pipeline.py
