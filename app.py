@@ -13,17 +13,16 @@ load_dotenv()
 
 class RagPdf:
     def __init__(self):
-        self.PDF_PATH     = r"E:\Shrimandhar\DS_interview\Aditya Y. Bhargava - Grokking Algorithms_ An illustrated guide for programmers and other curious people-Manning Publications (2016).pdf"
+        self.PDF_PATH     = r"path\to\your\example.pdf"
         self.docs = PyPDFLoader(self.PDF_PATH).load()
         self.embeddings = HuggingFaceEmbeddings(
-            model_name='E:\\Shrimandhar\\Generative AI Projects\\legal-helper\\all-MiniLM-L6-v2')
+            model_name='sentence-transformers/all-MiniLM-L6-v2')
         self.vectorstore = Chroma.from_documents(self.docs, self.embeddings)
 
     def build_rag_chain(self):
         # 2. Build RAG chain
         llm  = ChatVertexAI(model_name=os.environ["GEN_MODEL"], project=os.environ["PROJECT_ID"], location=os.environ["REGION"],temperature=0.2)
         rag_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
-
         doc_chain   = create_stuff_documents_chain(llm, rag_prompt)
         return create_retrieval_chain(self.vectorstore.as_retriever(),
                                              doc_chain)
